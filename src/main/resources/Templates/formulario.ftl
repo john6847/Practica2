@@ -82,7 +82,7 @@
     <form method="post" action="/formulario">
 
         <label for="matricula">Matricula</label>
-        <input type="text" id="matricula" name="matricula" pattern="[0-9]{8}" required>
+        <input type="text" id="matricula" name="matricula" pattern="[0-9]{8}" >
 
 
         <label for="nombre">Nombre</label>

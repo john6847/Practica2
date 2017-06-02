@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import static spark.Spark.*;
-import static spark.debug.DebugScreen.enableDebugScreen;
+
 
 /**
  * Created by john on 30/05/17.
@@ -21,9 +21,11 @@ import static spark.debug.DebugScreen.enableDebugScreen;
 public class Main {
 
     static final List<Estudiante> listaEstudiante = new ArrayList<>();
-    static final Map<String, Object> atributos = new HashMap<>();
+    //static final Map<String, Object> atributos = new HashMap<>();
 
     public static void main(String[] args) {
+        listaEstudiante.add(new Estudiante(20120467,"Manuel","Tolentino","8091234567"));
+        listaEstudiante.add(new Estudiante(20120467,"Manuel","Tolentino","8091234567"));
         listaEstudiante.add(new Estudiante(20120467,"Manuel","Tolentino","8091234567"));
 
 
@@ -45,6 +47,8 @@ public class Main {
             return new ModelAndView(null, "index.ftl");
         }, freeMarkerEngine);
 
+
+
         get("/formulario", (request, response) -> {
 
             return new ModelAndView(null, "formulario.ftl");
@@ -54,13 +58,9 @@ public class Main {
         post("/formulario", (request, response) -> {
 
             listaEstudiante.add(new Estudiante(Integer.parseInt(request.queryParams("matricula")),request.queryParams("nombre"),request.queryParams("apellido"),request.queryParams("telefono")));
-
-            atributos.put("titulo", "Formulario");
-
             response.redirect("/listarEstudiantes");
-
-            return new ModelAndView(atributos, "formulario.ftl");
-        }, freeMarkerEngine);
+            return "";
+        });
 
 
         get("/listarEstudiantes", (request, response) -> {
@@ -69,63 +69,51 @@ public class Main {
 
             attributes.put("titulo", "Lista de estudiantes");
             attributes.put("estudiantes",listaEstudiante);
-
             return new ModelAndView(attributes, "listarEstudiantes.ftl");
         }, freeMarkerEngine);
 
 
         get("/borrar/:matricula", (request, response) -> {
-            System.out.println("There");
-            Map<String, Object> attributes = new HashMap<>();
-            Estudiante estudiante= new Estudiante(Integer.parseInt(request.params("matricula")), "Nombre", "Apellido","Telefono");
-
-            for(Estudiante es: listaEstudiante){
-                System.out.println(es.getMatricula());
-                System.out.println(estudiante.getMatricula());
-                if(es.getMatricula()==estudiante.getMatricula()){
-                    System.out.println("Son iguales");
-                    listaEstudiante.remove(es);
-                    System.out.println(es);
-                }
-            }
-
-            attributes.put("estudiantes",listaEstudiante);
-            if(listaEstudiante.size()==0){
-                System.out.println("Lista nulla");
-                response.redirect("/formulario");
-            }
-            response.redirect("/listarEstudiantes");
-
-            return new ModelAndView(attributes,"listarEstudiantes.ftl");
-        }, freeMarkerEngine);
-
-        get("/editar/:matricula", (request, response) -> {
-           // System.out.println("There");
-           // Map<String, Object> attributes = new HashMap<>();
-
-           // Estudiante estudiante= new Estudiante(Integer.parseInt(request.params("matricula")), "Nombre", "Apellido","Telefono");
 
             for(Estudiante es: listaEstudiante){
 
                 if(es.getMatricula()==Integer.parseInt(request.params("matricula"))){
+                    System.out.println("Son iguales");
+                    listaEstudiante.remove(es);
+                    System.out.println(listaEstudiante.size());
+                }
+            }
+            response.redirect("/listarEstudiantes",301);
+            return "";
+        });
+
+/*            response.redirect("/");
+
+            return "";
+        });*/
+
+
+
+        get("/editar/:matricula", (request, response) -> {
+            Map<String, Object> atributos = new HashMap<>();
+            for(Estudiante es: listaEstudiante){
+
+                if(es.getMatricula()==Integer.parseInt(request.params("matricula"))){
+
                     System.out.println(Integer.parseInt(request.params("matricula")));
                     atributos.put("metodo", "editar");
                     atributos.put("titulo", "Editar estudiante.");
                     atributos.put("header", "Editar estudiante registrado.");
                     atributos.put("submit", "Actualizar");
-                    atributos.put("matricula", 20131256);
-                    atributos.put("nombre", "John");
-                    atributos.put("apellido", "Bienaime");
-                    atributos.put("telefono", "5516515");
+                    atributos.put("matricula", es.getMatricula());
+                    atributos.put("nombre", es.getNombre());
+                    atributos.put("apellido", es.getApellido());
+                    atributos.put("telefono", es.getTelefono());
                     System.out.println(es.getMatricula());
                 }
             }
-            //attributes.put("estudiante",estudiante);
 
-
-            //response.redirect("/formulario");
-
-            return new ModelAndView(atributos,"actualizar.ftl");
+            return new ModelAndView(atributos, "actualizar.ftl");
         }, freeMarkerEngine);
 
 
@@ -143,29 +131,15 @@ public class Main {
                 }
             }
 
+
             response.redirect("/listarEstudiantes");
 
             return "";
+            //return new ModelAndView(atributos, "formulario.ftl");
         });
 
     }
 
-
-
-
-
-
-
-    // Obtener el estudiante enviado por el request
-    private static Estudiante parseEstudiante(Request req) {
-        Estudiante estudiante = new Estudiante();
-        estudiante.setNombre(req.queryParams("nombre"));
-        estudiante.setApellido(req.queryParams("apellido"));
-        estudiante.setMatricula(Integer.parseInt(req.queryParams("matricula")));
-        estudiante.setTelefono(req.queryParams("telefono"));
-
-        return estudiante;
-    }
 
 
     /**

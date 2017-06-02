@@ -96,7 +96,7 @@
     <a href="/formulario" id="boton">Crear Estudiante</a>
 </div>
 
-<h2>${titulo}</h2>
+
 <p>Con esta lista de estudiante puedes borrar, actualizar informaciones de los estudiantes</p>
 
 <table>
@@ -114,7 +114,7 @@
         <#list estudiantes as estudiante>
 
         <tr>
-        <td ${estudiante?counter}></td>
+        <th scope="row"> ${estudiante?counter}</th>
         <td>${estudiante.matricula?string.computer}</td>
         <td>${estudiante.nombre}</td>
         <td>${estudiante.apellido}</td>
